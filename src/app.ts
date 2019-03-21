@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three-orbitcontrols-ts';
 import RenderLooper from 'render-looper';
+const OrbitControls = require('three-orbitcontrols')
 
 var OBJLoader = require('three-obj-loader');
 OBJLoader(THREE);
@@ -36,7 +36,7 @@ this.zoomSpeed = 1.0;
 
 console.log(THREE.OBJLoader);
 const loader = new THREE.OBJLoader();
-loader.load('./models/o.obj', function(object) {
+loader.load('./models/BaoLi_O.obj', function(object) {
     for (let child of object.children) {
         const geo = child.geometry;
         let pointMaterial = new THREE.PointsMaterial({
@@ -51,6 +51,11 @@ loader.load('./models/o.obj', function(object) {
 })
 
 new RenderLooper(() => {
+    scene.rotation.y += 0.01;
+    scene.traverse(function(obj) {
+        console.log(obj);
+        return;
+    })
     renderer.render(scene, camera);
     
 }).start()
