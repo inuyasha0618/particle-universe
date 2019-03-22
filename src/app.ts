@@ -46,6 +46,9 @@ loader.load('./models/o.obj', function(object) {
         pointIdx[i] = i;
     }
 
+    const pointTexture = textureLoader.load('./images/particle.png');
+    pointTexture.minFilter = THREE.LinearFilter;
+    pointTexture.magFilter = THREE.LinearFilter;
 
     totalBufferGeometry.addAttribute('aIndex', new BufferAttribute(pointIdx, 1, false));
     const shaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
@@ -56,16 +59,17 @@ loader.load('./models/o.obj', function(object) {
                 value: 0.0
             },
             tex: {
-                value: textureLoader.load('./images/particle.png')
+                value: pointTexture
             }
         },
-        // blending: THREE.AdditiveBlending,
-        // depthTest: false,
-        // transparent: true
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true
     })
 
     // const particleSystem = new THREE.Points(totalBufferGeometry, pointMaterial);
     particleSystem = new THREE.Points(totalBufferGeometry, shaderMaterial);
+    particleSystem.scale.setScalar(0.1)
     scene.add(particleSystem);
     console.log(totalBufferGeometry);
 })
