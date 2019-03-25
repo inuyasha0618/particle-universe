@@ -13,24 +13,26 @@ const textureLoader = new THREE.TextureLoader();
 
 const scene: THREE.Scene = new THREE.Scene();
 
-const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.setZ(200);
+const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+// camera.position.setZ(200);
+camera.position.set(0, 50, 1200);
+camera.lookAt(new THREE.Vector3(0, 50, 0));
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.minPolarAngle = 0;
-controls.maxPolarAngle = Math.PI;
+// controls.minPolarAngle = 0;
+// controls.maxPolarAngle = Math.PI;
  
  
 // How far you can dolly in and out ( PerspectiveCamera only )
 controls.minDistance = 0;
-controls.maxDistance = Infinity;
+controls.maxDistance = 900;
 
-this.enableZoom = true; // Set to false to disable zooming
-this.zoomSpeed = 1.0;
+// this.enableZoom = true; // Set to false to disable zooming
+// this.zoomSpeed = 1.0;
 
 let totalBufferGeometry: THREE.BufferGeometry = null;
 const loader = new THREE.OBJLoader();
@@ -42,8 +44,12 @@ loader.load('./models/o.obj', function(object) {
 
     const pointCnts: number = totalBufferGeometry.attributes.position.count;
     let pointIdx: Float32Array = new Float32Array(pointCnts);
+    let star_point_position: Float32Array = new Float32Array(pointCnts * 3);
     for (let i = 0; i < pointCnts; i++) {
         pointIdx[i] = i;
+        star_point_position[3 * i] = (Math.random() - 0.5) * 2000;
+        star_point_position[3 * i + 1] = (Math.random() - 0.5) * 1100;
+        star_point_position[3 * i + 2] = (Math.random() - 0.5) * 2000;
     }
 
     const pointTexture = textureLoader.load('./images/particle.png');
@@ -51,6 +57,7 @@ loader.load('./models/o.obj', function(object) {
     pointTexture.magFilter = THREE.LinearFilter;
 
     totalBufferGeometry.addAttribute('aIndex', new BufferAttribute(pointIdx, 1, false));
+    totalBufferGeometry.addAttribute('aStarPos', new BufferAttribute(star_point_position, 3, false));
     const shaderMaterial: THREE.ShaderMaterial = new THREE.ShaderMaterial({
         vertexShader: point_vs,
         fragmentShader: point_fs,
@@ -69,9 +76,8 @@ loader.load('./models/o.obj', function(object) {
 
     // const particleSystem = new THREE.Points(totalBufferGeometry, pointMaterial);
     particleSystem = new THREE.Points(totalBufferGeometry, shaderMaterial);
-    particleSystem.scale.setScalar(0.1)
+    // particleSystem.scale.setScalar(0.1)
     scene.add(particleSystem);
-    console.log(totalBufferGeometry);
 })
 
 function update(msTotal) {
@@ -89,7 +95,8 @@ function update(msTotal) {
 
 new RenderLooper((msDt, msTotal) => {
     update(msTotal);
-    // scene.rotation.y += 0.01;
+    scene.rotation.y -= .0002;
+
     renderer.render(scene, camera);
     
 }).start()
