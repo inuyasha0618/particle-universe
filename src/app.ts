@@ -15,7 +15,7 @@ const scene: THREE.Scene = new THREE.Scene();
 
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 // camera.position.setZ(200);
-camera.position.set(0, 50, 900);
+camera.position.set(0, 50, 500);
 camera.lookAt(new THREE.Vector3(0, 50, 0));
 
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ antialias: true });
@@ -76,7 +76,7 @@ loader.load('./models/o.obj', function(object) {
                 value: pointTexture
             },
             percent: {
-                value: 1.0
+                value: 0.0
             }
         },
         blending: THREE.AdditiveBlending,
@@ -93,7 +93,7 @@ loader.load('./models/o.obj', function(object) {
         console.log(obj)
         particleSystem.material.uniforms.percent.value = obj.percent;
     })
-    tween.start();
+    // tween.start();
 })
 
 function update(msTotal) {
@@ -118,4 +118,6 @@ new RenderLooper((msDt, msTotal) => {
     
 }).start()
 
-
+document.querySelector('#btn').addEventListener('click', function() {
+    tween.start();
+})
